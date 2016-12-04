@@ -1,0 +1,6 @@
+<database>
+    <host>localhost</host>
+    <dbname>test</dbname>
+    <login>root</login>
+    <password></password>
+</database>
