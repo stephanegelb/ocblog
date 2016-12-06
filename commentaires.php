@@ -14,6 +14,8 @@
         <p><a href="index.php">Retour à la liste des billets</a></p>
 
         <?php
+        include('db/db.php');
+        $db = getDb();
         include('dbblog.php');
 
         function afficheBillet($billet) {
@@ -30,7 +32,6 @@
         }
         
         $idbillet = (int)filter_input(INPUT_GET, 'billet');
-        $db = getDb();
         $billet = getBillet($db, $idbillet);
         afficheBillet($billet);
         $commentaires = getComments($db, $idbillet);

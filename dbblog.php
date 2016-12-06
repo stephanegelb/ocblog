@@ -1,66 +1,6 @@
 <?php
 
-class DbCredentials
-{
-    public function getDbCredentialsFromJson() {
-        $dbCredentials = array(
-            'host' => 'localhost', 
-            'dbname' => 'test', 
-            'login' => 'root', 
-            'password' => 'azer'
-        );
-
-        $filename = 'db.json';
-        if(file_exists($filename)) {
-            try {
-                $fileContent = file_get_contents($filename);
-                $json = json_decode($fileContent, true);
-                $dbCredentials['host'] = $json['host'];
-                $dbCredentials['dbname'] = $json['dbname'];
-                $dbCredentials['login'] = $json['login'];
-                $dbCredentials['password'] = $json['password'];
-            } catch (Exception $ex) {
-                //die('Erreur : '.$ex->getMessage());
-            }
-        }
-
-        return $dbCredentials;
-    }
-    
-    public function getDbCredentialsFromXml() {
-        $filename = 'db.xml';
-        $xml = simplexml_load_file($filename);
-        
-        $dbCredentials = array(
-            'host' => 'localhost', 
-            'dbname' => 'test', 
-            'login' => 'root', 
-            'password' => 'azer'
-        );
-
-        $dbCredentials['host'] = (string)$xml->host;
-        $dbCredentials['dbname'] = (string)$xml->dbname;
-        $dbCredentials['login'] = (string)$xml->login;
-        $dbCredentials['password'] = (string)$xml->password;
-                
-        return $dbCredentials;
-    }
-}
-
-function getDb() {
-    $dbCred = new DbCredentials;
-    $cred = $dbCred->getDbCredentialsFromXml();
-    $connectionString = 'mysql:host='.$cred['host'].';dbname='.$cred['dbname'].';charset=utf8;';   
-    try {
-        $db = new PDO($connectionString, $cred['login'], $cred['password']);
-    } catch (Exception $ex) {
-        die('Erreur : '.$ex->getMessage());
-    }
-
-    return $db;
-}
-
-function getBillets($db, $nombreDeBillets) {
+function getBillets(PDO $db, $nombreDeBillets) {
     $billets = array();
     $parametreNbBillets = (int)$nombreDeBillets; // peut mieux faire // TODO
     $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
@@ -89,7 +29,7 @@ function getBillets($db, $nombreDeBillets) {
     return $billets;
 }
 
-function getNbComments($db) {
+function getNbComments(PDO $db) {
     $nbComments = array();
     $sql = 'SELECT id_billet, count(*) as nombreCommentaires FROM commentaires group by id_billet';
     $q = $db->query($sql);
@@ -100,7 +40,7 @@ function getNbComments($db) {
     return $nbComments;
 }
 
-function getBillet($db, $idBillet) {
+function getBillet(PDO $db, $idBillet) {
     // Récupération du billet
     $queryBillets = $db->prepare('SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM billets WHERE id = ?');
     $queryBillets->execute(array($idBillet));
@@ -116,7 +56,7 @@ function getBillet($db, $idBillet) {
     return $billet;
 }
 
-function getComments($db, $idBillet) {
+function getComments(PDO $db, $idBillet) {
     // Récupération des commentaires
     $query = $db->prepare('SELECT auteur, commentaire, DATE_FORMAT(date_commentaire, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr FROM commentaires WHERE id_billet = ? ORDER BY date_commentaire');
     $query->execute(array($idBillet));
@@ -135,7 +75,7 @@ function getComments($db, $idBillet) {
     return $comments;
 }
 
-function insertCommentaire($db, $idBillet, $auteur, $commentaire) {
+function insertCommentaire(PDO $db, $idBillet, $auteur, $commentaire) {
     $statement = 'INSERT INTO commentaires (id, id_billet, auteur, commentaire, date_commentaire) VALUES (NULL,?,?,?,now())';
     // TODO securiser les entrees pour ne pas mettre de html et/ou javascript dans les values
     $query = $db->prepare($statement);

@@ -6,9 +6,9 @@ $commentaire = filter_input(INPUT_POST, 'commentaire');
 
 if($id != null && $auteur != null && $commentaire != null) {
     if(strlen($auteur) > 0 && strlen($commentaire) > 0) {
-        include 'dbblog.php';
-        
+        include 'db/db.php';
         $db = getDb();
+        include 'dbblog.php';
         insertCommentaire($db, $id, $auteur, $commentaire);
     }
 }

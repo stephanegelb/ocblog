@@ -16,6 +16,8 @@
         $str = getLinkAdmin();
         echo $str;
         
+        include('db/db.php');
+        $db = getDb();        
         include('dbblog.php');
 
 //        $dbCred = new DbCredentials;
@@ -24,7 +26,6 @@
 //        $cred = $dbCred->getDbCredentialsFromXml();
 //        print_r($cred); echo '<br>';
     
-        $db = getDb();        
         $billets = getBillets($db, 4);
         
         foreach($billets as $billet)
