@@ -1,8 +1,7 @@
-﻿
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8" />
+        <meta charset="iso-8859-1" />
         <title>Mon blog</title>
         <link rel='stylesheet' href='style.css'/> 
     </head>
@@ -18,25 +17,25 @@
         
         include('db/db.php');
         $db = getDb();        
-        include('dbblog.php');
-
-//        $dbCred = new DbCredentials;
-//        $cred = $dbCred->getDbCredentialsFromJson();
-//        print_r($cred); echo '<br>';
-//        $cred = $dbCred->getDbCredentialsFromXml();
-//        print_r($cred); echo '<br>';
+        include('db/dbblog.php');
+        $blog = new blog($db);
     
-        $billets = getBillets($db, 4);
+        $billets = $blog->getBilletsArray(4);
         
         foreach($billets as $billet)
         {
         ?>
         <div class="news">
-            <h3><?php echo $billet['titre']; ?><em><?php echo $billet['date_creation'];?></em></h3>
+            <?php 
+                $idbillet = $billet->id; 
+                $nbCommentaires = $billet->nbComments;
+                $strCommentaires = $nbCommentaires.' Commentaire'.($nbCommentaires>1?"s":"");
+            ?>
+            <h3><?php echo utf8_decode($billet->titre); ?><em><?php echo $billet->date_creation_fr;?></em></h3>
             <p>
-                <?php echo nl2br($billet['contenu']); $idbillet = $billet['id']; $nbCommentaires = $billet['nbComments']?>
+                <?php echo nl2br(utf8_decode($billet->contenu)); ?>
                 <br>
-                <em><a href="commentaires.php?billet=<?php echo $idbillet;?>"><?php echo $nbCommentaires?> Commentaire<?php echo($nbCommentaires>1?'s':'');?></a></em>
+                <em><a href="commentaires.php?billet=<?php echo $idbillet;?>"><?php echo $strCommentaires?></a></em>
             </p>
         </div>
         <?php
