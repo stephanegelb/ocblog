@@ -2,3 +2,4 @@ db.json
 db.xml
 db.free.xml
 /nbproject/private/
+/admin/.htpasswd
