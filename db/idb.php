@@ -6,7 +6,16 @@
  * and open the template in the editor.
  */
 
-interface iDb {
+interface IDb {
+    function query($sql);
+    //function prepare($sql, $options = null);
+    function fetchAll($sql, $array, $objectName = null);
+    function fetchColumn($sql);
+    function exec($sql, $array = null);
+}
+
+interface IDbStatement {
+    //function execute($array);
     function fetch();
-    
+    function closeCursor();
 }

@@ -1,50 +1,43 @@
 <?php
 
-include 'iblog.php';
+include_once __DIR__.'\iblog.php';
 
-class blog implements iblog {
-    private $db;
+abstract class blog implements iblog {
+    protected $db;
     
-    public function __construct(PDO $db) {
+    public function __construct(iDb $db) {
         $this->db = $db;
     }
+
+    protected abstract function fetch($statement);
     
     function getBilletsArray($nombreDeBillets) {
         $billets = array();
         $parametreNbBillets = (int)$nombreDeBillets; // peut mieux faire // TODO
         $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
 
+        $nbCommentsByBillet = $this->getNbCommentsPerBillet();
+
         // On récupère les 5 derniers billets
-        $statement = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
+        $sql = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
                 . 'FROM billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
         //$statement = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%y à %Hh%imin%ss\') AS date_creation_fr '
         //        . 'FROM billets ORDER BY date_creation DESC LIMIT 0, 10';
-        $query = $this->db->query($statement);   
-
-        $nbComments = $this->getNbComments();
-
-        while($data = $query->fetch()) {
-    //        $billet = array(
-    //            'id' => $data['id'],
-    //            'titre' => htmlspecialchars($data['titre']),
-    //            'contenu' => htmlspecialchars($data['contenu']),
-    //            'date_creation' => $data['date_creation_fr'],
-    //            'nbComments' => isset($nbComments[$data['id']]) ? $nbComments[$data['id']] : 0
-    //        );
+        $statement = $this->db->query($sql);   
+        while($data = $statement->fetch()) {
             $billet = new billet();
             $billet->id = $data['id'];
             $billet->titre = htmlspecialchars($data['titre']);
             $billet->contenu = htmlspecialchars($data['contenu']);
             $billet->date_creation = $data['date_creation_fr'];
-            $billet->nbComments = isset($nbComments[$data['id']]) ? $nbComments[$data['id']] : 0;
-
+            $billet->nbComments = isset($nbCommentsByBillet[$data['id']]) ? $nbCommentsByBillet[$data['id']] : 0;
             array_push($billets, $billet);
         }
-        $query->closeCursor();
+        $statement->closeCursor();
 
         return $billets;
     }
-
+    
     function getBilletsWithNbCmts($numberOfBillets) {
         $parametreNbBillets = (int)$numberOfBillets; // peut mieux faire // TODO
         $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
@@ -53,66 +46,49 @@ class blog implements iblog {
     //            . 'DATE_FORMAT(b.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, .'
     //            . 'COUNT(commentaires.id_billets) as nbComments '
     //            . 'FROM billets as b LEFT JOIN commentaires GROUP BY commentaires.id_billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
-        $statement = 'SELECT b.id, b.titre, b.contenu, '
+        $sql = 'SELECT b.id, b.titre, b.contenu, '
                 . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
                 . 'FROM billets as b LEFT JOIN commentaires as c ON b.id = c.id_billet, '
                 . 'COUNT(c.id_billets) as nbComments GROUP BY c.id_billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
-        $statement = 'select billets.*, '
+        $sql = 'select billets.*, '
                 . 'count(commentaires.id_billet) as nbComments '
                 . 'from billets as b left join commentaires on billets.id = commentaires.id_billet '
                 . 'group by commentaires.id_billet ';   
-        $statement = 'select billets.id, billets.titre, billets.contenu, '
+        $sql = 'select billets.id, billets.titre, billets.contenu, '
                 . 'DATE_FORMAT(billets.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, '
                 . 'count(commentaires.id_billet) as nbComments '
                 . 'from billets left join commentaires on billets.id = commentaires.id_billet '
                 . 'group by commentaires.id_billet';
 
-        $sth = $this->db->prepare($statement); 
-        $sth->execute();
-        $data = $sth->fetchAll(PDO::FETCH_CLASS, 'billet');
+        $data = $this->db->fetchAll($sql, null, 'billet'); 
         return $data;
     }
 
     function getNbBillets() {
         $sql = 'select count(*) from billets';
-        $sth = $this->db->prepare($sql); 
-        $sth->execute();
-        $data = $sth->fetchColumn();
+        $data = $this->db->fetchColumn($sql); 
         return $data;    
     }
     
     function getAllBillets() {
         $sql = 'select * from billets';
-        $sth = $this->db->prepare($sql); 
-        $sth->execute();
-        $data = $sth->fetchAll(PDO::FETCH_CLASS, 'billet');
+        $data = $this->db->fetchAll($sql, null, 'billet');
         return $data;    
     }
-
-    //function getCommentsObj(PDO $pdo) {
-    //    $statement = 'select * from commentaires';
-    //    $sth = $pdo->prepare($statement); 
-    //    $sth->execute();
-    //    $data = $sth->fetchAll(PDO::FETCH_CLASS);
-    //    return $data;    
-    //}
 
     function getOneBillet($idBillet) {
         $sql = 'SELECT id, titre, contenu, '
                 . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
                 . 'FROM billets WHERE id = ?';
         // Récupération du billet
-        $query = $this->db->prepare($sql);
-        $query->execute(array($idBillet));
-        $data = $query->fetchAll(PDO::FETCH_CLASS, 'billet');
+        $data = $this->db->fetchAll($sql, array($idBillet), 'billet');
         return count($data) === 1 ? $data[0] : null;
     }
     
     function insertBillet(billet $billet) {
         $sql = 'INSERT INTO billets (titre,contenu,date_creation)'
                 . ' VALUES (?,?,now())';
-        $statement = $this->db->prepare($sql);
-        $statement->execute(array($billet->titre,$billet->contenu));
+        $statement = $this->db->fetchAll($sql, array($billet->titre,$billet->contenu));
     }
     
     function deleteBillet($idBillet) {
@@ -125,23 +101,28 @@ class blog implements iblog {
     }
     
     function getNbComments() {
+        $sql = 'select count(*) from commentaires';
+        $data = $this->db->fetchColumn($sql); 
+        return $data;    
+    }
+    
+    function getNbCommentsPerBillet() {
         $nbComments = array();
         $sql = 'SELECT id_billet, count(*) as nombreCommentaires FROM commentaires group by id_billet';
-        $q = $this->db->query($sql);
-        while($d = $q->fetch()) {
+        $statement = $this->db->query($sql);
+        while($d = $statement->fetch()) {
             $nbComments[$d['id_billet']] = $d['nombreCommentaires'];
         }
-        $q->closeCursor();  
+        $statement->closeCursor();  
         return $nbComments;
     }
     
     function getOneComment($idComment) {
         // Récupération du billet
-        $query = $this->db->prepare('SELECT id, id_billet, auteur, commentaire, '
+        $sql = 'SELECT id, id_billet, auteur, commentaire, '
                 . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr '
-                . 'FROM billets WHERE id = ?');
-        $query->execute(array($idComment));
-        $data = $query->fetchAll(PDO::FETCH_CLASS, 'comment');
+                . 'FROM billets WHERE id = ?';
+        $data = $this->db->fetchAll($sql, array($idComment), 'comment');
         return count($data) === 1 ? $data[0] : null;        
     }
 
@@ -160,9 +141,7 @@ class blog implements iblog {
         if($idBillet !== null) {
             $sql .= 'WHERE id_billet = ? ORDER BY date_commentaire';
         }
-        $statement = $this->db->prepare($sql);
-        $statement->execute(array($idBillet));
-        $data = $statement->fetchAll(PDO::FETCH_CLASS, 'comment');
+        $data = $this->db->fetchAll($sql, array($idBillet), 'comment');
         return $data;
     }
 
@@ -170,8 +149,7 @@ class blog implements iblog {
         $sql = 'INSERT INTO commentaires (id, id_billet, auteur, commentaire, date_commentaire) '
                 . 'VALUES (NULL,?,?,?,now())';
         // TODO securiser les entrees pour ne pas mettre de html et/ou javascript dans les values
-        $statement = $this->db->prepare($sql);
-        $statement->execute(array($comment->id_billet, $comment->auteur, $comment->commentaire));
+        $this->db->exec($sql, array($comment->id_billet, $comment->auteur, $comment->commentaire));
     }
        
     function deleteComment($idComment) {

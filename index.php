@@ -11,14 +11,14 @@
         <!--<p><a href="admin/admin.php">admin</a></p>-->
         
         <?php
+        // show the link for the admin page
         include('admin/linkadmin.php');
         $str = getLinkAdmin();
         echo $str;
         
-        include('db/db.php');
-        $db = getDb();        
-        include('db/dbblog.php');
-        $blog = new blog($db);
+        // get db
+        include('db/dbblogfactory.php');
+        $blog = getdbblog();
     
         $billets = $blog->getBilletsArray(4);
         

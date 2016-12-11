@@ -6,15 +6,15 @@ $commentaire = filter_input(INPUT_POST, 'commentaire');
 
 if($idBillet != null && $auteur != null && $commentaire != null) {
     if(strlen($auteur) > 0 && strlen($commentaire) > 0) {
-        include 'db/db.php';
-        $db = getDb();
-        include 'db/dbblog.php';
-        $blog = new blog($db);
+        // get db
+        include('db/dbblogfactory.php');
+        $blog = getdbblog();
         
         $comment = new comment();
         $comment->id_billet = $idBillet;
         $comment->auteur = $auteur;
         $comment->commentaire = $commentaire;
+
         $blog->insertComment($comment);
     }
 }

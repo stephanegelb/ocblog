@@ -18,10 +18,8 @@
         <p><a href="index.php">Retour à la liste des billets</a></p>
 
         <?php
-        include('db/db.php');
-        $db = getDb();
-        include('db/dbblog.php');
-        $blog = new blog($db);
+        include('db/dbblogfactory.php');
+        $blog = getdbblog();
 
         function displayBillet(billet $billet) {
             $chaine = '<div class="news">'
@@ -79,6 +77,22 @@
                     ?>
                 </tbody>
             </table>
+        <?php
+        }
+        ?>
+        
+        
+        <?php
+        // pagination
+        $nbPages = $nbComments>0 ? floor($nbComments/5) + 1 : 1;
+        if($nbPages > 1) 
+        {
+        ?>
+        <ul class='pagination pagination-lg'>
+            <?php for($page=1; $page<=$nbPages; $page++) { ?>
+            <li><a href='#'><?php echo $page; ?></a></li>
+            <?php } ?>
+        </ul>
         <?php
         }
         ?>
