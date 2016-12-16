@@ -33,10 +33,48 @@
   <p>An inverted navbar is black instead of gray.</p>
   
   <h3>Tests</h3>
+  <form action="tests.php" method="post">
+      <input type="radio" name="test" value="InsertBillet" checked="checked">Insert Billet<br>
+      <input type="radio" name="test" value="InsertComment">Insert Comment<br>
+      <input type="radio" name="test" value="GetNbBillets">GetNbBillets<br>
+      <input type="radio" name="test" value="GetNbComments">GetNbComments<br>
+      <input type="submit" value="Submit">      
+  </form>
+  
   <?php
-  require __DIR__.'/../models/billet.php';
-  //$billet = new billet();
-  echo get_class(new billet());
+  
+  
+  // tests db
+  require __DIR__.'/../db/dbblogfactory.php';
+  $db = getdbblog();
+  
+  if(isset($_POST['test'])) {
+      switch ($_POST['test']) {
+          case 'InsertBillet': 
+            $nbBilletsBefore = $db->getNbBillets(); 
+            echo '<br>Nombre de billets avant insertion : ' . $nbBilletsBefore;
+
+            echo '<br>Insertion d\'un billet';
+            $billet = new billet('titre '.rand(100, 200).'', 'contenu du billet');
+            $db->insertBillet($billet);
+
+            $nbBilletsAfter = $db->getNbBillets();
+            echo '<br>Nombre de billets après insertion : ' . $nbBilletsAfter;
+            break;
+        
+          case 'InsertComment':
+              echo 'TODO InsertComment';
+              break;
+          
+          case 'GetNbBillets':
+              echo 'TODO GetNbBillets';
+              break;
+
+          case 'GetNbComments':
+              echo 'TODO GetNbComments';
+              break;
+      }
+  }
   ?>
 </div>
 

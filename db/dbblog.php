@@ -11,33 +11,6 @@ abstract class blog implements iblog {
 
     protected abstract function fetch($statement);
     
-//    function getBilletsArray($nombreDeBillets) {
-//        $billets = array();
-//        $parametreNbBillets = (int)$nombreDeBillets; // peut mieux faire // TODO
-//        $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
-//
-//        $nbCommentsByBillet = $this->getNbCommentsPerBillet();
-//
-//        // On récupère les 5 derniers billets
-//        $sql = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
-//                . 'FROM billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
-//        //$statement = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%y à %Hh%imin%ss\') AS date_creation_fr '
-//        //        . 'FROM billets ORDER BY date_creation DESC LIMIT 0, 10';
-//        $statement = $this->db->query($sql);   
-//        while($data = $statement->fetch()) {
-//            $billet = new billet();
-//            $billet->id = $data['id'];
-//            $billet->titre = htmlspecialchars($data['titre']);
-//            $billet->contenu = htmlspecialchars($data['contenu']);
-//            $billet->date_creation = $data['date_creation_fr'];
-//            $billet->nbComments = isset($nbCommentsByBillet[$data['id']]) ? $nbCommentsByBillet[$data['id']] : 0;
-//            array_push($billets, $billet);
-//        }
-//        $statement->closeCursor();
-//
-//        return $billets;
-//    }
-    
     function getBilletsWithNbCmts($numberOfBillets=-1, $offset=-1) {
         $sql = 'select billets.id, billets.titre, billets.contenu, '
                 . 'DATE_FORMAT(billets.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, '
@@ -52,8 +25,7 @@ abstract class blog implements iblog {
             }
         }
 
-        //$className = get_class(new billet());
-        $className = 'billet';
+        $className = get_class(new billet());
         $data = $this->db->fetchAll($sql, null, $className); 
         return $data;
     }
@@ -66,7 +38,8 @@ abstract class blog implements iblog {
     
     function getAllBillets() {
         $sql = 'select * from billets';
-        $data = $this->db->fetchAll($sql, null, 'billet');
+        $className = get_class(new billet());
+        $data = $this->db->fetchAll($sql, null, $className);
         return $data;    
     }
 
@@ -75,7 +48,8 @@ abstract class blog implements iblog {
                 . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
                 . 'FROM billets WHERE id = ?';
         // Récupération du billet
-        $data = $this->db->fetchAll($sql, array($idBillet), 'billet');
+        $className = get_class(new billet());
+        $data = $this->db->fetchAll($sql, array($idBillet), $className);
         return count($data) === 1 ? $data[0] : null;
     }
     
@@ -116,7 +90,8 @@ abstract class blog implements iblog {
         $sql = 'SELECT id, id_billet, auteur, commentaire, '
                 . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr '
                 . 'FROM billets WHERE id = ?';
-        $data = $this->db->fetchAll($sql, array($idComment), 'comment');
+        $className = get_class(new comment());
+        $data = $this->db->fetchAll($sql, array($idComment), $className);
         return count($data) === 1 ? $data[0] : null;        
     }
 
@@ -135,7 +110,8 @@ abstract class blog implements iblog {
         if($idBillet !== null) {
             $sql .= 'WHERE id_billet = ? ORDER BY date_commentaire';
         }
-        $data = $this->db->fetchAll($sql, array($idBillet), 'comment');
+        $className = get_class(new comment());
+        $data = $this->db->fetchAll($sql, array($idBillet), $className);
         return $data;
     }
 

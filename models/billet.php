@@ -13,4 +13,13 @@ class billet
     public $contenu;
     public $date_creation_fr;
     public $nbComments;
+    
+    public function __construct($titre=null, $contenu=null) {
+        if($titre!==null && strlen($titre)>0) {
+            $this->titre = $titre;
+        }
+        if($contenu!==null && strlen($contenu)>0) {
+            $this->contenu = $contenu;
+        }
+    }
 };
