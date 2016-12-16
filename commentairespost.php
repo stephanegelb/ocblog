@@ -7,7 +7,7 @@ $commentaire = filter_input(INPUT_POST, 'commentaire');
 if($idBillet != null && $auteur != null && $commentaire != null) {
     if(strlen($auteur) > 0 && strlen($commentaire) > 0) {
         // get db
-        include('db/dbblogfactory.php');
+        require('db/dbblogfactory.php');
         $blog = getdbblog();
         
         $comment = new comment();

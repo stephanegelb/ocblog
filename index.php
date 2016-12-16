@@ -13,10 +13,10 @@
         <!-- TODO http://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_navbar_collapse&stacked=h -->
     
         <?php
-        //        // show the link for the admin page
-        //        include('admin/linkadmin.php');
-        //        $str = getLinkAdmin();
-        //        echo $str;
+        // // show the link for the admin page
+        // require('admin/linkadmin.php');
+        // $str = getLinkAdmin();
+        // echo $str;
         
         // parameter to display number of billets
         define('NB', 'nb');
@@ -28,7 +28,7 @@
         }
 
         // get db
-        include('db/dbblogfactory.php');
+        require('db/dbblogfactory.php');
         $blog = getdbblog();
 
         $nbBillets = $blog->getNbBillets();

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-    <?php $title = 'Administration de mon blog'; include_once 'include/head.php'; ?>
+    <?php $title = 'Administration de mon blog'; require_once 'include/head.php'; ?>
     <body>
-        <?php include_once 'navbar.php'; ?>
+        <?php require_once 'navbar.php'; ?>
 
         <div id="container-fluid">
             <h1>Administration de mon blog</h1>
@@ -11,7 +11,7 @@
             echo "filename and path of this file: ".$path.'<br>';
 
             // get db
-            include('../db/dbblogfactory.php');
+            require('../db/dbblogfactory.php');
             $blog = getdbblog();
 
             echo '<br>Nombre de billets dans la base : '.$blog->getNbBillets();
@@ -55,10 +55,10 @@
             </table>
 
             <h2>liste des billets</h2>
-            <?php include_once 'tablebillets.php'; ?>
+            <?php include 'tablebillets.php'; ?>
             
             <h2>liste des comments</h2>
-            <?php include_once 'tablecomments.php'; ?>
+            <?php include 'tablecomments.php'; ?>
             
         </div>
     </body>

@@ -1,8 +1,8 @@
 <?php
 
-include_once 'idb.php';
-include_once 'dbCredentials.php';
-include_once 'dbblog.php';
+require_once 'idb.php';
+require_once 'dbCredentials.php';
+require_once 'dbblog.php';
 
 class blogpdo extends blog {
     protected function fetch($statement) {

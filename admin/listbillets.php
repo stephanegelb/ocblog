@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
-    <?php include_once 'include/head.php'; ?>
+    <?php require_once 'include/head.php'; ?>
     <body>
         <?php 
-        include_once 'navbar.php'; 
-        include_once '/../db/dbblogfactory.php';
+        require_once 'navbar.php'; 
+        require_once '/../db/dbblogfactory.php';
         $blog = getdbblog();
         ?>
         <div class='container'>
-            <?php include_once 'tablebillets.php'; ?>
+            <?php require_once 'tablebillets.php'; ?>
         </div>
     </body>
 </html>

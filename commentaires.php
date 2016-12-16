@@ -18,7 +18,7 @@
         <p><a href="index.php">Retour à la liste des billets</a></p>
 
         <?php
-        include('db/dbblogfactory.php');
+        require('db/dbblogfactory.php');
         $blog = getdbblog();
 
         function displayBillet(billet $billet) {

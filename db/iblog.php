@@ -7,8 +7,8 @@
  */
 
 // TODO a revoir avec autoload et spl_autoload ou namespace ou kekchose
-include_once __DIR__.'\..\models\billet.php';
-include_once __DIR__.'\..\models\comment.php';
+require_once __DIR__.'\..\models\billet.php';
+require_once __DIR__.'\..\models\comment.php';
 
 interface iblog {
     function getAllBillets();
