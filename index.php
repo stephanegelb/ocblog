@@ -17,13 +17,22 @@
         //        include('admin/linkadmin.php');
         //        $str = getLinkAdmin();
         //        echo $str;
+        
+        // parameter to display number of billets
+        define('NB', 'nb');
+        define('DEFAULTNB', 4);
+        $nbBilletsToDisplay = DEFAULTNB;
+        if(isset($_GET[NB])) {
+            $nbBilletsToDisplay = intval($_GET[NB]);
+            $nbBilletsToDisplay = $nbBilletsToDisplay>0 ? $nbBilletsToDisplay : DEFAULTNB;
+        }
 
         // get db
         include('db/dbblogfactory.php');
         $blog = getdbblog();
 
         $nbBillets = $blog->getNbBillets();
-        $nbBilletsToDisplay = 3;
+        
         $billets = $blog->getBilletsWithNbCmts($nbBilletsToDisplay);
         ?>
         
@@ -31,8 +40,8 @@
             <h1>Mon blog</h1>
             <p>Derniers billets du blog - <a href="admin/admin.php">admin</a></p>
             <p>Le site contient actuellement <?php echo $nbBillets; ?> billets</p>
-            <?php if($nbBillets != $nbBilletsToDisplay) { ?>
-            <p>Affichage des <?php echo $nbBilletsToDisplay; ?> billets.</p>
+            <?php if($nbBillets != $nbBilletsToDisplay && $nbBillets > $nbBilletsToDisplay) { ?>
+            <p>Affichage de <?php echo $nbBilletsToDisplay; ?> billets.</p>
             <?php } ?>
                    
             <?php
