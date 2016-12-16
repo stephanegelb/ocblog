@@ -1,7 +1,7 @@
 <nav class='navbar navbar-inverse'>
     <div id='container-fluid'>
         <div class='navbar-header'>
-            <span class="navbar-brand" href="#">Mon blog</span>
+            <span class="navbar-brand" href="../index.php">Mon blog</span>
         </div>
     </div>
     <ul class='nav navbar-nav'>

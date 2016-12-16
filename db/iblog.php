@@ -14,8 +14,8 @@ interface iblog {
     function getAllBillets();
     function getNbBillets();
     function getOneBillet($idBillet);
-    function getBilletsArray($numberOfBillets);
-    function getBilletsWithNbCmts( $numberOfBillets);
+    //function getBilletsArray($numberOfBillets);
+    function getBilletsWithNbCmts( $numberOfBillets=-1, $offset=-1);
     function insertBillet(billet $billet);
     function deleteBillet($idBillet);
 

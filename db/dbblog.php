@@ -11,56 +11,50 @@ abstract class blog implements iblog {
 
     protected abstract function fetch($statement);
     
-    function getBilletsArray($nombreDeBillets) {
-        $billets = array();
-        $parametreNbBillets = (int)$nombreDeBillets; // peut mieux faire // TODO
-        $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
-
-        $nbCommentsByBillet = $this->getNbCommentsPerBillet();
-
-        // On récupère les 5 derniers billets
-        $sql = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
-                . 'FROM billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
-        //$statement = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%y à %Hh%imin%ss\') AS date_creation_fr '
-        //        . 'FROM billets ORDER BY date_creation DESC LIMIT 0, 10';
-        $statement = $this->db->query($sql);   
-        while($data = $statement->fetch()) {
-            $billet = new billet();
-            $billet->id = $data['id'];
-            $billet->titre = htmlspecialchars($data['titre']);
-            $billet->contenu = htmlspecialchars($data['contenu']);
-            $billet->date_creation = $data['date_creation_fr'];
-            $billet->nbComments = isset($nbCommentsByBillet[$data['id']]) ? $nbCommentsByBillet[$data['id']] : 0;
-            array_push($billets, $billet);
-        }
-        $statement->closeCursor();
-
-        return $billets;
-    }
+//    function getBilletsArray($nombreDeBillets) {
+//        $billets = array();
+//        $parametreNbBillets = (int)$nombreDeBillets; // peut mieux faire // TODO
+//        $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
+//
+//        $nbCommentsByBillet = $this->getNbCommentsPerBillet();
+//
+//        // On récupère les 5 derniers billets
+//        $sql = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
+//                . 'FROM billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
+//        //$statement = 'SELECT id, titre, contenu, DATE_FORMAT(date_creation, \'%d/%m/%y à %Hh%imin%ss\') AS date_creation_fr '
+//        //        . 'FROM billets ORDER BY date_creation DESC LIMIT 0, 10';
+//        $statement = $this->db->query($sql);   
+//        while($data = $statement->fetch()) {
+//            $billet = new billet();
+//            $billet->id = $data['id'];
+//            $billet->titre = htmlspecialchars($data['titre']);
+//            $billet->contenu = htmlspecialchars($data['contenu']);
+//            $billet->date_creation = $data['date_creation_fr'];
+//            $billet->nbComments = isset($nbCommentsByBillet[$data['id']]) ? $nbCommentsByBillet[$data['id']] : 0;
+//            array_push($billets, $billet);
+//        }
+//        $statement->closeCursor();
+//
+//        return $billets;
+//    }
     
-    function getBilletsWithNbCmts($numberOfBillets) {
-        $parametreNbBillets = (int)$numberOfBillets; // peut mieux faire // TODO
-        $nbBillets = $parametreNbBillets <= 0 ? 5 : $parametreNbBillets;
-
-    //    $statement = 'SELECT b.id as id, b.titre as titre, b.contenu as contenu, .'
-    //            . 'DATE_FORMAT(b.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, .'
-    //            . 'COUNT(commentaires.id_billets) as nbComments '
-    //            . 'FROM billets as b LEFT JOIN commentaires GROUP BY commentaires.id_billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
-        $sql = 'SELECT b.id, b.titre, b.contenu, '
-                . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
-                . 'FROM billets as b LEFT JOIN commentaires as c ON b.id = c.id_billet, '
-                . 'COUNT(c.id_billets) as nbComments GROUP BY c.id_billets ORDER BY date_creation DESC LIMIT 0, ' . $nbBillets;
-        $sql = 'select billets.*, '
-                . 'count(commentaires.id_billet) as nbComments '
-                . 'from billets as b left join commentaires on billets.id = commentaires.id_billet '
-                . 'group by commentaires.id_billet ';   
+    function getBilletsWithNbCmts($numberOfBillets=-1, $offset=-1) {
         $sql = 'select billets.id, billets.titre, billets.contenu, '
                 . 'DATE_FORMAT(billets.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, '
                 . 'count(commentaires.id_billet) as nbComments '
                 . 'from billets left join commentaires on billets.id = commentaires.id_billet '
-                . 'group by commentaires.id_billet';
+                . 'group by billets.id, commentaires.id_billet DESC';
+        
+        if(isset($numberOfBillets) && is_int($numberOfBillets) && $numberOfBillets>-1) {
+            if(isset($offset) && is_int($offset)) {
+                $offset = $offset<0 ? 0 : $offset;
+                $sql .= " LIMIT ".$offset.",".$numberOfBillets;
+            }
+        }
 
-        $data = $this->db->fetchAll($sql, null, 'billet'); 
+        //$className = get_class(new billet());
+        $className = 'billet';
+        $data = $this->db->fetchAll($sql, null, $className); 
         return $data;
     }
 
