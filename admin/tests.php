@@ -21,7 +21,7 @@
           <span class="glyphicon glyphicon-home"></span> Home
         </a>
       </li>
-      <li><a href="#">Page 1</a></li>
+      <li><a href="admin.php">Admin</a></li>
       <li><a href="#">Page 2</a></li>
       <li><a href="#">Page 3</a></li>
     </ul>
@@ -38,6 +38,8 @@
       <input type="radio" name="test" value="InsertComment">Insert Comment<br>
       <input type="radio" name="test" value="GetNbBillets">GetNbBillets<br>
       <input type="radio" name="test" value="GetNbComments">GetNbComments<br>
+      <input type="radio" name="test" value="GetOneBillet">GetOneBillet<br>
+      <input type="radio" name="test" value="GetOneComment">GetOneComment<br>
       <input type="submit" value="Submit">      
   </form>
   
@@ -62,16 +64,41 @@
             echo '<br>Nombre de billets après insertion : ' . $nbBilletsAfter;
             break;
         
-          case 'InsertComment':
-              echo 'TODO InsertComment';
-              break;
           
+          case 'InsertComment':
+            $nbCommentsBefore = $db->getNbComments(); 
+            echo '<br>Nombre de commentaires avant insertion : ' . $nbCommentsBefore;
+
+            echo '<br>Insertion d\'un billet';
+            $comment = new comment(1, 'auteur', 'commentaire'.rand(100, 200));
+            $db->insertComment($comment);
+
+            $nbCommentsAfter = $db->getNbComments();
+            echo '<br>Nombre de commentaires après insertion : ' . $nbCommentsAfter;
+            break;
+          
+        
           case 'GetNbBillets':
-              echo 'TODO GetNbBillets';
+              $nbBillets = $db->getNbBillets();
+              echo '<br>Nombre de billets : ' . $nbBillets;
               break;
 
+          
           case 'GetNbComments':
-              echo 'TODO GetNbComments';
+              $nbComments = $db->getNbComments();
+              echo '<br>Nombre de comments : ' . $nbComments;
+              break;
+          
+          
+          case 'GetOneBillet':
+              $billet = $db->getOneBillet(1);
+              echo '<br>'.var_dump($billet);
+              break;
+          
+          
+          case 'GetOneComment':
+              $comment = $db->getOneComment(1);
+              echo '<br>'.var_dump($comment);
               break;
       }
   }

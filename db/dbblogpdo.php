@@ -35,9 +35,14 @@ class DbPDO implements IDb
 
     
     public function fetchAll($sql, $array, $objectName = null) {
+        $data = null;
         $statement = $this->pdo->prepare($sql);
         $statement->execute($array);
-        $data = $statement->fetchAll(PDO::FETCH_CLASS, (string)$objectName);
+        if(!is_null($objectName)) {
+            $data = $statement->fetchAll(PDO::FETCH_CLASS, (string)$objectName);
+        } else {
+            $data = $statement->fetchAll();
+        }
         $statement = null;
         return $data;
     }

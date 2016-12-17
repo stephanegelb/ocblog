@@ -88,8 +88,8 @@ abstract class blog implements iblog {
     function getOneComment($idComment) {
         // Récupération du billet
         $sql = 'SELECT id, id_billet, auteur, commentaire, '
-                . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr '
-                . 'FROM billets WHERE id = ?';
+                . 'DATE_FORMAT(date_commentaire, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr '
+                . 'FROM commentaires WHERE id = ?';
         $className = get_class(new comment());
         $data = $this->db->fetchAll($sql, array($idComment), $className);
         return count($data) === 1 ? $data[0] : null;        

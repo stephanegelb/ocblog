@@ -1,5 +1,5 @@
 <?php
 // silence is golden
-echo 'page autorisé';
+echo 'page autorisé<br>';
 echo realpath('index.php');
 ?>
