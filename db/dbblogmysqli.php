@@ -25,16 +25,34 @@ class DbMysqli implements iDb {
         }        
     }
     
+    public function __destruct() {
+        try {
+            $this->mysqli->close();
+        } catch (Exception $ex) {
+            die('Erreur : '.$ex->getMessage());
+        }
+    }
+    
     public function query($sql) {
         return new DbMysqliStatement($this->mysqli->query($sql));
     } 
     
     public function fetchAll($sql, $array, $objectName = null) {
         // TODO
+        $data = [];
+        if(($result = $this->mysqli->query($sql))) {
+            while($object = $result->fetch_object($objectName)) {
+                array_push($data, $object);
+            }
+            $result->close();
+        }
+        return $data;
     }   
     
     public function fetchColumn($sql) {
         // TODO
+        $array = $this->mysqli->query($sql)->fetch_array();
+        return $array[0];
     }
     
     public function exec($sql, $array = null) {

@@ -13,6 +13,14 @@
             // get db
             require('../db/dbblogfactory.php');
             $blog = getdbblog();
+            if($blog instanceof blogpdo) {
+                echo 'db is PDO<br>';
+            } else if($blog instanceof blogmysqli) {
+                echo 'db is SQLI<br>';
+            } else {
+                echo 'db is '.get_class($blog).'<br>';
+            }
+                
 
             echo '<br>Nombre de billets dans la base : '.$blog->getNbBillets();
             echo '<br>Nombre de comments dans la base : '.$blog->getNbComments();
