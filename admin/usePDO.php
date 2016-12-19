@@ -6,7 +6,7 @@ require('../db/dbblogfactory.php');
 if(isset($_POST[USEPDOPOST])) {
     $value = $_POST[USEPDOPOST];
     if($value === 'true' || $value === 'false') {
-        setcookie(USEPDOCOOKIE, $value);
+        setUseDbCookie($value === 'true' ? true : false);
     }
 }
 

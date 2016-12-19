@@ -7,7 +7,6 @@
  */
 
 interface IDb {
-    function query($sql);
     //function prepare($sql, $options = null);
     function fetchAll($sql, $array, $objectName = null);
     function fetchColumn($sql);

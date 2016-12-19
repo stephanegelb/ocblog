@@ -9,8 +9,6 @@ abstract class blog implements iblog {
         $this->db = $db;
     }
 
-    protected abstract function fetch($statement);
-    
     function getBilletsWithNbCmts($numberOfBillets=-1, $offset=-1) {
         $sql = 'select billets.id, billets.titre, billets.contenu, '
                 . 'DATE_FORMAT(billets.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, '
@@ -56,12 +54,12 @@ abstract class blog implements iblog {
     function insertBillet(billet $billet) {
         $sql = 'INSERT INTO billets (titre,contenu,date_creation)'
                 . ' VALUES (?,?,now())';
-        $statement = $this->db->fetchAll($sql, array($billet->titre,$billet->contenu));
+        $this->db->exec($sql, array($billet->titre,$billet->contenu));
     }
     
     function deleteBillet($idBillet) {
-        $sql = "DELETE FROM billets WHERE id=".$idBillet;
-        $this->db->exec($sql);
+        $sql = "DELETE FROM billets WHERE id=?";
+        $this->db->exec($sql, array($idBillet));
     }
 
     function getAllComments() {
@@ -73,18 +71,7 @@ abstract class blog implements iblog {
         $data = $this->db->fetchColumn($sql); 
         return $data;    
     }
-    
-    function getNbCommentsPerBillet() {
-        $nbComments = array();
-        $sql = 'SELECT id_billet, count(*) as nombreCommentaires FROM commentaires group by id_billet';
-        $statement = $this->db->query($sql);
-        while($d = $statement->fetch()) {
-            $nbComments[$d['id_billet']] = $d['nombreCommentaires'];
-        }
-        $statement->closeCursor();  
-        return $nbComments;
-    }
-    
+      
     function getOneComment($idComment) {
         // Récupération du billet
         $sql = 'SELECT id, id_billet, auteur, commentaire, '
@@ -108,10 +95,10 @@ abstract class blog implements iblog {
                 . 'DATE_FORMAT(date_commentaire, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr '
                 . 'FROM commentaires ';
         if($idBillet !== null) {
-            $sql .= 'WHERE id_billet = ? ORDER BY date_commentaire';
+            $sql .= 'WHERE id_billet = '.$idBillet.' ORDER BY date_commentaire';
         }
         $className = get_class(new comment());
-        $data = $this->db->fetchAll($sql, array($idBillet), $className);
+        $data = $this->db->fetchAll($sql, null, $className);
         return $data;
     }
 
@@ -123,7 +110,7 @@ abstract class blog implements iblog {
     }
        
     function deleteComment($idComment) {
-        $sql = "DELETE FROM commentaires WHERE id=".$idComment;
-        $this->db->exec($sql);
+        $sql = "DELETE FROM commentaires WHERE id=?";
+        $this->db->exec($sql, array($idComment));
     }
 }

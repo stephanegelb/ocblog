@@ -5,9 +5,6 @@ require_once 'dbCredentials.php';
 require_once 'dbblog.php';
 
 class blogpdo extends blog {
-    protected function fetch($statement) {
-        return $statement->fetch();
-    }
 }
 
 class DbPDO implements IDb 
@@ -28,12 +25,7 @@ class DbPDO implements IDb
     public function __destruct() {
         $this->pdo = null;
     }
-    
-    public function query($sql) {
-        return new DbPDOStatement($this->pdo->query($sql));
-    }
 
-    
     public function fetchAll($sql, $array, $objectName = null) {
         $data = null;
         $statement = $this->pdo->prepare($sql);
@@ -43,6 +35,7 @@ class DbPDO implements IDb
         } else {
             $data = $statement->fetchAll();
         }
+        $statement->closeCursor();
         $statement = null;
         return $data;
     }
@@ -51,6 +44,7 @@ class DbPDO implements IDb
         $sth = $this->pdo->prepare($sql); 
         $sth->execute();
         $data = $sth->fetchColumn();
+        $sth->closeCursor();
         return $data;           
     }
     
@@ -63,28 +57,3 @@ class DbPDO implements IDb
         }     
     }
 }
-
-class DbPDOStatement implements IDbStatement {
-    private $statement;
-        
-    public function __construct($statement) {
-        $this->statement = $statement;
-    }
-    
-    public function __destruct() {
-        $this->statement = null;
-    }
-    
-//    function execute($array) {
-//        $this->statement->execute($array);
-//    }
-
-    public function fetch() {
-        return $this->statement->fetch();
-    }
-    
-    public function closeCursor() {
-        $this->statement->closeCursor();
-    }
-}
-

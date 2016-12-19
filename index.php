@@ -1,3 +1,9 @@
+<?php
+// get db
+require('db/dbblogfactory.php');
+$blog = getdbblog();
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,10 +32,7 @@
             $nbBilletsToDisplay = intval($_GET[NB]);
             $nbBilletsToDisplay = $nbBilletsToDisplay>0 ? $nbBilletsToDisplay : DEFAULTNB;
         }
-
-        // get db
-        require('db/dbblogfactory.php');
-        $blog = getdbblog();
+        $showAdminFree = isset($_GET['adminfree']);
 
         $nbBillets = $blog->getNbBillets();
         
@@ -38,7 +41,10 @@
         
         <div class="container">
             <h1>Mon blog</h1>
-            <p>Derniers billets du blog - <a href="admin/admin.php">admin</a></p>
+            <p>
+                Derniers billets du blog - <a href="admin/admin.php">admin</a>
+                <?php if($showAdminFree) { echo ' - <a href="adminfree/index.php">admin free</a>'; }?>
+            </p>
             <p>Le site contient actuellement <?php echo $nbBillets; ?> billets</p>
             <?php if($nbBillets != $nbBilletsToDisplay && $nbBillets > $nbBilletsToDisplay) { ?>
             <p>Affichage de <?php echo $nbBilletsToDisplay; ?> billets.</p>

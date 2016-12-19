@@ -6,8 +6,14 @@ function isUsePDO() {
     $isUsePDO = true;
     if(isset($_COOKIE[USEPDOCOOKIE])) {
         $isUsePDO = $_COOKIE[USEPDOCOOKIE] === 'true' ? true : false;
+    } else {
+        setUseDbCookie();
     }
     return $isUsePDO;    
+}
+
+function setUseDbCookie($usePDO = true) {
+    setcookie(USEPDOCOOKIE, $usePDO ? 'true' : 'false', 2147483647, '/');
 }
 
 require_once __DIR__.'\dbblogmysqli.php';
