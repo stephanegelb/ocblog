@@ -1,18 +1,18 @@
 <?php
 
-require_once 'idb.php';
-require_once 'dbCredentials.php';
-require_once 'dbblog.php';
+//require_once 'idb.php';
+//require_once 'dbCredentials.php';
+//require_once 'dbblog.php';
 
-class blogpdo extends blog {
+class dbblogpdo extends dbblog {
 }
 
-class DbPDO implements IDb 
+class DbPDO implements idb 
 {
     private $pdo;
 
     public function __construct() {
-        $dbCredentials = new DbCredentials;
+        $dbCredentials = new dbCredentials;
         $connectionString = $dbCredentials->getDbCredentialsFromXml()->getConnectionString();
 
         try {

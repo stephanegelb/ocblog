@@ -18,8 +18,8 @@
         <p><a href="index.php">Retour à la liste des billets</a></p>
 
         <?php
-        require('db/dbblogfactory.php');
-        $blog = getdbblog();
+        require('autoload.php');
+        $blog = dbblogfactory::getdbblog();
 
         function displayBillet(billet $billet) {
             $chaine = '<div class="news">'

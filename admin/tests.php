@@ -47,9 +47,9 @@
   
   
   // tests db
-  require __DIR__.'/../db/dbblogfactory.php';
-  $db = getdbblog();
-  
+  require __DIR__.'/../autoload.php';
+  $blog = dbblogfactory::getdbblog();
+
   if(isset($_POST['test'])) {
       switch ($_POST['test']) {
           case 'InsertBillet': 

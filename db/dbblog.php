@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__.'\iblog.php';
+//require_once __DIR__.'\iblog.php';
 
-abstract class blog implements iblog {
+abstract class dbblog implements iblog {
     protected $db;
     
     public function __construct(iDb $db) {

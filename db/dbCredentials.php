@@ -1,6 +1,6 @@
 <?php
 
-class DbCredentials
+class dbCredentials
 {
     public $host;
     public $dbname;
@@ -37,8 +37,8 @@ class DbCredentials
     
     public function getDbCredentialsFromXml($filename = null) {
         if($filename === null) {
-            $filename = __DIR__.'\db.xml';
-        }
+            $filename = __DIR__.'/db.xml';
+        } 
 
         if(file_exists($filename)) {
             $xml = simplexml_load_file($filename);
@@ -48,7 +48,7 @@ class DbCredentials
             $this->login = (string)$xml->login;
             $this->password = (string)$xml->password;
         }
-
+        
         return $this;
     }
     

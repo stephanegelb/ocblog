@@ -1,7 +1,6 @@
 <?php
-// get db
-require('db/dbblogfactory.php');
-$blog = getdbblog();
+require 'autoload.php';
+$blog = dbblogfactory::getdbblog()
 ?>
 
 <!DOCTYPE html>

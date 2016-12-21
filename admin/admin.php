@@ -11,11 +11,11 @@
             echo "filename and path of this file: ".$path.'<br>';
 
             // get db
-            require __DIR__.'/../db/dbblogfactory.php';
-            $blog = getdbblog();
-            if($blog instanceof blogpdo) {
+            require __DIR__.'/../autoload.php';
+            $blog = dbblogfactory::getdbblog();
+            if($blog instanceof dbblogpdo) {
                 echo 'db is PDO<br>';
-            } else if($blog instanceof blogmysqli) {
+            } else if($blog instanceof dbblogmysqli) {
                 echo 'db is SQLI<br>';
             } else {
                 echo 'db is '.get_class($blog).'<br>';

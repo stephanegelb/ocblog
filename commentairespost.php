@@ -7,8 +7,8 @@ $commentaire = filter_input(INPUT_POST, 'commentaire');
 if($idBillet != null && $auteur != null && $commentaire != null) {
     if(strlen($auteur) > 0 && strlen($commentaire) > 0) {
         // get db
-        require('db/dbblogfactory.php');
-        $blog = getdbblog();
+        require('autoload.php');
+        $blog = dbblogfactory::getdbblog();
         
         $comment = new comment();
         $comment->id_billet = $idBillet;

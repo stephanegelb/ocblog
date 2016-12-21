@@ -4,8 +4,8 @@
     <body>
         <?php 
         require_once 'navbar.php'; 
-        require_once '/../db/dbblogfactory.php';
-        $blog = getdbblog();
+        require __DIR__.'/../autoload.php';
+        $blog = dbblogfactory::getdbblog();
         ?>
         <div class='container'>
             <?php require_once 'tablebillets.php'; ?>

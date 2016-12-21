@@ -1,16 +1,21 @@
 <?php
 // get db
-require('../db/dbblogfactory.php');
-//$blog = getdbblog();
+require __DIR__.'/../autoload.php';
+//$blog = dbblogfactory::getdbblog();
 
-if(isset($_POST[USEPDOPOST])) {
-    $value = $_POST[USEPDOPOST];
+
+if(isset($_POST[dbblogfactory::USEPDOPOST])) {
+    $value = $_POST[dbblogfactory::USEPDOPOST];
     if($value === 'true' || $value === 'false') {
-        setUseDbCookie($value === 'true' ? true : false);
+        dbblogfactory::setUseDbCookie($value === 'true' ? true : false);
     }
 }
 
-$boolPDO = isUsePDO();
+if(isset($_GET['ForceSqli'])) {
+    dbblogfactory::setUseDbCookie(false);
+}
+
+$boolPDO = dbblogfactory::isUsePDO();
 $isUsePDO = $boolPDO ? 'true' : 'false';
 $isUseSQLI = $boolPDO ? 'false' : 'true';
 ?>

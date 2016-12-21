@@ -1,17 +1,17 @@
 <?php
 
-require_once 'idb.php';
-require_once 'dbCredentials.php';
-require_once 'dbblog.php';
+//require_once 'idb.php';
+//require_once 'dbCredentials.php';
+//require_once 'dbblog.php';
 
-class blogmysqli extends blog {
+class dbblogmysqli extends dbblog {
 }
 
-class DbMysqli implements iDb {
+class DbMysqli implements idb {
     private $mysqli;
     
     public function __construct() {
-        $dbCredentials = new DbCredentials;
+        $dbCredentials = new dbCredentials;
         $dbCredentials->getDbCredentialsFromXml();
 
         try {
@@ -32,7 +32,14 @@ class DbMysqli implements iDb {
     public function fetchAll($sql, $array, $objectName = null) {
         // TODO
         $data = [];
-        if(($result = $this->mysqli->query($sql))) {
+        // bricolage
+        $newsql = $sql;
+        if(count($array) >= 1) {
+            $newsql = str_replace('?', $array[0], $sql);
+        }
+        // TODO securiser tout ca!
+        
+        if(($result = $this->mysqli->query($newsql))) {
             while($object = $result->fetch_object($objectName)) {
                 array_push($data, $object);
             }
