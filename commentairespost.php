@@ -11,9 +11,9 @@ if($idBillet != null && $auteur != null && $commentaire != null) {
         $blog = dbblogfactory::getdbblog();
         
         $comment = new comment();
-        $comment->id_billet = $idBillet;
-        $comment->auteur = $auteur;
-        $comment->commentaire = $commentaire;
+        $comment->id_billet = (int)$idBillet;
+        $comment->auteur = htmlspecialchars($auteur);
+        $comment->commentaire = htmlspecialchars($commentaire);
 
         $blog->insertComment($comment);
     }
