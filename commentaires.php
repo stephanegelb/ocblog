@@ -16,12 +16,12 @@ if(isset($_SESSION[NbCommentsPerPage])) {
     $nbCommentsPerPage = intval($_SESSION[NbCommentsPerPage]);   
 }
 // the page num to display for the comments
-if(isset($_GET['p'])) {
-    $page = intval($_GET['p']);
+if(isset($_GET[PAGE])) {
+    $page = intval($_GET[PAGE]);
 }
 // the number of comments to display per page
-if(isset($_GET['nb'])) {
-    $nb = intval($_GET['nb']);
+if(isset($_GET[NB])) {
+    $nb = intval($_GET[NB]);
     if($nb>0 && $nb != $nbCommentsPerPage) {
         $nbCommentsPerPage = $nb;
         $_SESSION[NbCommentsPerPage] = $nbCommentsPerPage;

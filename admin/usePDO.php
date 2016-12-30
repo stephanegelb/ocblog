@@ -14,6 +14,9 @@ if(isset($_POST[dbblogfactory::USEPDOPOST])) {
 if(isset($_GET['ForceSqli'])) {
     dbblogfactory::setUseDbCookie(false);
 }
+if(isset($_GET['ForcePDO'])) {
+    dbblogfactory::setUseDbCookie(true);
+}
 
 $boolPDO = dbblogfactory::isUsePDO();
 $isUsePDO = $boolPDO ? 'true' : 'false';

@@ -64,6 +64,11 @@ abstract class dbblog implements iblog {
         $sql = "DELETE FROM billets WHERE id=?";
         $this->db->exec($sql, array($idBillet));
     }
+    
+    function updateBillet(billet $billet) {
+        $sql = "UPDATE billets SET titre=?, contenu=? WHERE id=?";
+        $this->db->exec($sql, array($billet->titre, $billet->contenu, $billet->id));
+    }
 
     function getAllComments() {
         return $this->getComments();

@@ -21,6 +21,13 @@ class dbblogmysqli extends dbblog {
         // TODO securiser les entrees pour ne pas mettre de html et/ou javascript dans les values
         $this->db->exec($sql);
     }
+    
+    function updateBillet(billet $billet) {
+        $titre = str_replace("'", "''", $billet->titre);
+        $contenu = str_replace("'", "''", $billet->contenu);
+        $sql = sprintf("UPDATE billets SET titre='%s', contenu='%s' WHERE id=%d",$titre,$contenu,$billet->id);
+        $this->db->exec($sql);
+    }    
 }
 
 class DbMysqli implements idb {
