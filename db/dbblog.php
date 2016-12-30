@@ -42,9 +42,12 @@ abstract class dbblog implements iblog {
     }
 
     function getOneBillet($idBillet) {
-        $sql = 'SELECT id, titre, contenu, '
-                . 'DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr '
-                . 'FROM billets WHERE id = ?';
+        $sql = 'SELECT billets.id, billets.titre, billets.contenu, '
+                . 'DATE_FORMAT(billets.date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr, '
+                . 'count(commentaires.id_billet) as nbComments '
+                . 'from billets left join commentaires on billets.id = commentaires.id_billet '
+                . 'where billets.id = ? '
+                . 'group by billets.id, commentaires.id_billet DESC';
         // Récupération du billet
         $className = get_class(new billet());
         $data = $this->db->fetchAll($sql, array($idBillet), $className);
@@ -82,21 +85,30 @@ abstract class dbblog implements iblog {
         return count($data) === 1 ? $data[0] : null;        
     }
 
-    function getCommentsByBillet($idBillet) {
-        return $this->getComments($idBillet);
+    function getCommentsByBillet($idBillet, $numberOfComments = null, $offset = null) {
+        return $this->getComments($idBillet,$numberOfComments,$offset);
     }
     
     // getComments
     // if idBillet is null, return all comments for all billets
     // if idBillet specified, return comments for the corresponding billet
-    private function getComments($idBillet = null) {
+    private function getComments($idBillet = null, $numberOfComments = null, $offset = null) {
         // Récupération des commentaires
         $sql = 'SELECT id, id_billet, auteur, commentaire, '
                 . 'DATE_FORMAT(date_commentaire, \'%d/%m/%Y à %Hh%imin%ss\') AS date_commentaire_fr '
                 . 'FROM commentaires ';
+        
         if($idBillet !== null) {
             $sql .= 'WHERE id_billet = '.$idBillet.' ORDER BY date_commentaire';
         }
+        
+        if(isset($numberOfComments) && is_int($numberOfComments) && $numberOfComments>-1) {
+            if(isset($offset) && is_int($offset)) {
+                $offset = $offset<0 ? 0 : $offset;
+                $sql .= " LIMIT ".$offset.",".$numberOfComments;
+            }
+        }
+        
         $className = get_class(new comment());
         $data = $this->db->fetchAll($sql, null, $className);
         return $data;
